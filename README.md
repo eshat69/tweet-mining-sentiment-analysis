@@ -101,7 +101,18 @@ The application will open in your browser.
 
 ---
 
-## 📈 Model
+
+## 📊 Model Performance
+
+The project evaluates multiple machine learning algorithms for tweet sentiment classification. The comparison below shows the training and testing accuracy of each model.
+
+| Model | Training Accuracy | Testing Accuracy |
+|-------|------------------:|-----------------:|
+| Naive Bayes | **97.17%** | **80.43%** |
+| Decision Tree | **78.85%** | **73.31%** |
+| Logistic Regression | **88.64%** | **79.73%** |
+| **Linear SVM (Best Model)** | **90.72%** | **82.55%** |
+
 
 **Classifier**
 
