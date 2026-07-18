@@ -1,6 +1,25 @@
 import streamlit as st
 import pickle
 import re
+import nltk
+
+# Download NLTK resources (only once)
+resources = {
+    "punkt": "tokenizers/punkt",
+    "punkt_tab": "tokenizers/punkt_tab",
+    "stopwords": "corpora/stopwords",
+    "wordnet": "corpora/wordnet",
+    "omw-1.4": "corpora/omw-1.4",
+}
+
+for resource, path in resources.items():
+    try:
+        nltk.data.find(path)
+    except LookupError:
+        nltk.download(resource)
+
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
 # -----------------------------
@@ -26,23 +45,32 @@ def load_model():
     return model, vectorizer
 
 model, vectorizer = load_model()
+
+stop_words = set(stopwords.words("english"))
 lemmatizer = WordNetLemmatizer()
 
 # -----------------------------
 # Text Cleaning
 # -----------------------------
 def clean_text(text):
+
     text = text.lower()
+
     text = re.sub(r"http\S+", "", text)
     text = re.sub(r"www\S+", "", text)
     text = re.sub(r"@\w+", "", text)
     text = re.sub(r"#", "", text)
-    text = re.sub(r"[^a-zA-Z\s]", "", text)
+    text = re.sub(r"[^a-zA-Z\s]", " ", text)
 
-    words = text.split()
-    words = [lemmatizer.lemmatize(word) for word in words]
+    tokens = word_tokenize(text)
 
-    return " ".join(words)
+    tokens = [
+        lemmatizer.lemmatize(word)
+        for word in tokens
+        if word not in stop_words and word.isalpha()
+    ]
+
+    return " ".join(tokens)
 
 # -----------------------------
 # Prediction
@@ -54,7 +82,7 @@ def predict(text):
     return prediction
 
 # -----------------------------
-# User Interface
+# UI
 # -----------------------------
 st.title("🐦 Twitter Sentiment Analysis")
 st.markdown("### Predict Tweet Sentiment using Linear SVM")
@@ -62,16 +90,18 @@ st.markdown("### Predict Tweet Sentiment using Linear SVM")
 tweet = st.text_area(
     "Enter Tweet",
     height=180,
-    placeholder="Type a tweet here..."
+    placeholder="Type your tweet here..."
 )
 
-if st.button("Predict"):
+if st.button("Predict Sentiment"):
 
     if tweet.strip() == "":
         st.warning("Please enter a tweet.")
+
     else:
 
         pred = predict(tweet)
+
         if pred == 0:
             st.error("😠 Negative")
         elif pred == 1:
@@ -84,5 +114,5 @@ if st.button("Predict"):
             st.write(f"Prediction: {pred}")
 
         st.markdown("---")
-        st.write("**Original Tweet:**")
+        st.write("### Original Tweet")
         st.write(tweet)
