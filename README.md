@@ -16,6 +16,8 @@ This project analyzes tweets and predicts their sentiment using NLP preprocessin
 - 😐 Neutral
 - 🤔 Irrelevant
 
+<img width="1472" height="989" alt="word cloud" src="https://github.com/user-attachments/assets/7dfea4cc-2eb5-4ae6-9ca9-107af1be81a2" />
+
 ---
 
 ## 🚀 Features
